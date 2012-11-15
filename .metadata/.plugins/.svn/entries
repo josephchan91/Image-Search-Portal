@@ -1,0 +1,55 @@
+10
+
+dir
+197
+svn://ds01.seas.upenn.edu:10212/MKSE212-F12/joch/HW1/.metadata/.plugins
+svn://ds01.seas.upenn.edu:10212
+
+
+
+2012-09-24T03:21:09.137334Z
+153
+joch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5ad26087-e723-4249-8126-bead7c82311c
+
+org.eclipse.ui.intro
+dir
+
+com.google.gdt.eclipse.managedapis
+dir
+
+org.eclipse.jdt.core
+dir
+
+org.eclipse.core.runtime
+dir
+
+org.eclipse.debug.core
+dir
+
+org.eclipse.jdt.ui
+dir
+
+org.eclipse.ui.workbench
+dir
+
+org.eclipse.core.resources
+dir
+
+org.eclipse.wb.discovery.core
+dir
+

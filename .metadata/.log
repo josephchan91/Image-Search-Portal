@@ -1,0 +1,36 @@
+!SESSION 2012-09-21 15:23:42.970 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2012-09-21 15:25:06.473
+!MESSAGE Invalid preference page path: XML Syntax
+!SESSION 2012-09-22 20:56:23.222 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2012-09-22 20:57:03.255
+!MESSAGE Invalid preference page path: XML Syntax
+!SESSION 2012-09-23 20:46:05.949 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2012-09-23 21:27:02.233
+!MESSAGE Invalid preference page path: XML Syntax
+!SESSION 2012-09-23 21:27:11.154 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2012-09-23 21:28:34.216
+!MESSAGE Invalid preference page path: XML Syntax

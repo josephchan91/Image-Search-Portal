@@ -1,0 +1,158 @@
+package edu.upenn.mkse212.dbpedia;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import edu.upenn.mkse212.IKeyValueStorage;
+import edu.upenn.mkse212.KeyValueStoreFactory;
+import edu.upenn.mkse212.PorterStemmer;
+import edu.upenn.mkse212.Triple;
+import edu.upenn.mkse212.KeyValueStoreFactory.STORETYPE;
+
+public class IndexImages {
+	ParseTriples parser;
+	IKeyValueStorage imageStore, titleStore;
+	STORETYPE typ;
+	String path;
+	String userID;
+	String authKey;
+	boolean compress;
+	private final int MAX_PAIRINGS = 254;
+	private final int MAX_ENTRIES = 1000;
+
+	public IndexImages() {
+		typ = Settings.storeType;
+		path = Settings.pathToDatabase;
+		userID = Settings.accessKeyID;
+		authKey = Settings.secretAccessKey;
+		compress = Settings.compress;
+	}
+
+	public void run() throws IOException
+  {
+    // TODO: This method should load all images and titles 
+    //       into the two key-value stores.
+	imageStore = KeyValueStoreFactory.getKeyValueStore(typ, "images", path,
+			userID, authKey, compress);
+	titleStore = KeyValueStoreFactory.getKeyValueStore(typ, "terms", path,
+			userID, authKey, compress);
+		
+	indexImageFile(Settings.imageFileName);
+	indexTermsFile(Settings.titleFileName);
+	
+	imageStore.close();
+	titleStore.close();
+  }
+
+	private void test() {
+		// TEST
+		for (String val : imageStore
+				.get("http://dbpedia.org/resource/American_National_Standards_Institute"
+						.toLowerCase())) {
+			System.out.println("val: " + val);
+		}
+		imageStore.close();
+		titleStore.init("terms", path, userID, authKey);
+		for (String val : titleStore.get("american")) {
+			System.out.println("val: " + val);
+		}
+		for (String val : titleStore.get("nate")) {
+			System.out.println("val: " + val);
+		}
+		for (String val : titleStore.get("standard")) {
+			System.out.println("val: " + val);
+		}
+		for (String val : titleStore.get("institut")) {
+			System.out.println("val: " + val);
+		}
+	}
+
+	private void indexImageFile(String fileName) throws IOException {
+		ParseTriples imageParser = new ParseTriples(fileName);
+		Triple triple = imageParser.getNextTriple();
+		String filter = Settings.filter.toLowerCase();
+
+		int counter = 0;
+		// Parse through triples 
+		while (triple != null && counter < MAX_ENTRIES) {
+			counter++;
+			// Regularize data
+			String categoryURL = triple.getSubject().toLowerCase();
+			String relationship = triple.getPredicate().toLowerCase();
+			String imgURL = triple.getObject();
+			// Get topic from substring following the last '/'
+			int lastSlashIdx = categoryURL.lastIndexOf("/");
+			String topic = categoryURL.substring(lastSlashIdx + 1,
+					categoryURL.length()).toLowerCase();
+			// Check if relationship is valid
+			if (relationship.equals("http://xmlns.com/foaf/0.1/depiction")) {
+				// Enter into store if no filter was entered or if topic begins
+				// with the filter
+				if (filter.equals("") || topic.matches("^" + filter + "+.*$")) {
+						imageStore.put(categoryURL, imgURL);
+				}
+			}
+			triple = imageParser.getNextTriple();
+		}
+		imageParser.close();
+	}
+
+	private void indexTermsFile(String fileName) throws IOException {
+		ParseTriples termParser = new ParseTriples(fileName);
+		Triple triple = termParser.getNextTriple();
+		
+		int counter = 0;
+		// Parse through triples
+		while (triple != null && counter < MAX_ENTRIES) {
+			counter++;
+			String categoryURL = triple.getSubject().toLowerCase();
+			// Check if category is in image database
+			if (imageStore.exists(categoryURL)) {
+				String label = triple.getObject();
+				// Check for cases like 'ASCII' or 'AbalonE'
+				if (label.matches("^[A-Z]+$")
+						|| label.matches("^[A-Z][a-z]+[A-Z]$")) {
+					// Check for max pairings
+					if (titleStore.get(PorterStemmer.stem(label.toLowerCase())).size() < MAX_PAIRINGS) {
+						titleStore.put(PorterStemmer.stem(label.toLowerCase()), categoryURL);
+						triple = termParser.getNextTriple();
+						continue;
+					}
+				}
+				// For any other case, pattern match to split up into terms
+				Pattern p = Pattern.compile("(\\W*[A-Z0-9]*[a-z]*)");
+				Matcher m = p.matcher(label);
+				// Iterate over matches found
+				while (m.find()) {
+					// Get rid of any non-word characters, ready for stemming
+					String subsequence = m.group(1).replaceAll("\\W", "")
+							.toLowerCase();
+					// Only store if string is not empty
+					if (!subsequence.isEmpty() && !PorterStemmer.stem(subsequence).isEmpty()) {
+						// Store each term key with the corresponding category, check for max pairings
+						if (titleStore.get(PorterStemmer.stem(subsequence)).size() < MAX_PAIRINGS) {
+							titleStore.put(PorterStemmer.stem(subsequence), categoryURL);
+						}
+					}
+				}
+			}
+			triple = termParser.getNextTriple();
+		}
+		termParser.close();
+	}
+
+	public static void main(String args[]) {
+		// TODO: Add your own name and SEAS login here
+		System.out.println("*** Author: Joseph Chan (joch)");
+		try {
+			IndexImages indexer = new IndexImages();
+			indexer.run();
+			System.out.println("Indexing completed");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err
+					.println("Failed to complete the indexing pass -- exiting");
+		}
+	}
+}
