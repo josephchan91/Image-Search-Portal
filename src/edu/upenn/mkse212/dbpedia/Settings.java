@@ -13,11 +13,11 @@ public class Settings {
     
   // Dummy value for the first milestone; set to your Amazon Access
   // Key ID for the second milestone.
-  public static final String accessKeyID = "AKIAJHGTF7UA5D2XKVTA";
+  public static final String accessKeyID = "";
   
   // Dummy value for the first milestone; set to your Secret Access Key
   // for the second milestone.  
-  public static final String secretAccessKey = "aHtdyCu2GR//1EfFBvBBTob9jLa+XXYV8NgXnpP8";
+  public static final String secretAccessKey = "";
   
   // For the second milestone, you may want to set this to true to save
   // bandwidth.
